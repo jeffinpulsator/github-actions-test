@@ -28,11 +28,16 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Get version check script
+        run: |
+          git fetch origin main
+          git show origin/main:.github/scripts/version_check.py > /tmp/version_check.py
+
       - name: Fetch tags
         run: git fetch --tags --force
 
       - name: Compare Versions
-        run: python .github/scripts/version_check.py
+        run: python /tmp/version_check.py
 
       - name: Show sdkconfig changes
         run: git diff -- sdkconfig
