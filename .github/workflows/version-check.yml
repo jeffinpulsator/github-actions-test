@@ -20,5 +20,8 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Fetch tags
+        run: git fetch --tags --force
+
       - name: Compare Versions
         run: python .github/scripts/version_check.py
