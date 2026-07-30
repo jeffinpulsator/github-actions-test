@@ -64,6 +64,24 @@ try:
             f"PR version ({pr_version}) must be greater than main version ({main_version})"
         )
 
+    tag_name = f"v{pr_version}"
+    
+    print()
+    print(f"Checking Git tag: {tag_name}")
+    
+    result = subprocess.run(
+        ["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag_name}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    
+    if result.returncode == 0:
+        raise Exception(
+            f"Git tag already exists: {tag_name}"
+        )
+    
+    print(f"Tag {tag_name} does not exist.")
+
     print()
     print("Version check PASSED")
 
