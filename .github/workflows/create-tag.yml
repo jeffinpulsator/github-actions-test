@@ -18,36 +18,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
       - name: Read version
         id: version
         run: |
-          python - <<'PY'
-          import version
+          VERSION_NAME=$(python -c "import version; print(version.VERSION_NAME)")
+          BUILD_NO=$(python -c "import version; print(version.BUILD_NO)")
 
-          print(f"VERSION_NAME={version.VERSION_NAME}")
-          print(f"BUILD_NO={version.BUILD_NO}")
+          echo "VERSION_NAME: $VERSION_NAME"
+          echo "BUILD_NO: $BUILD_NO"
 
-          with open(
-              "${GITHUB_OUTPUT}",
-              "a"
-          ) as f:
-              f.write(f"version={version.VERSION_NAME}\n")
-              f.write(f"build={version.BUILD_NO}\n")
-          PY
+          echo "version=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD_NO" >> "$GITHUB_OUTPUT"
 
       - name: Create tag
         run: |
           TAG_NAME="v${{ steps.version.outputs.version }}"
 
-          echo "Creating tag: $TAG_NAME"
+          echo "Tag name: $TAG_NAME"
 
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists."
+            echo "ERROR: Tag $TAG_NAME already exists."
             exit 1
           fi
 
@@ -56,3 +46,5 @@ jobs:
 
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
+
+          echo "Successfully created tag: $TAG_NAME"
