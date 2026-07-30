@@ -25,3 +25,6 @@ jobs:
 
       - name: Compare Versions
         run: python .github/scripts/version_check.py
+
+      - name: Show sdkconfig changes
+        run: git diff -- sdkconfig
