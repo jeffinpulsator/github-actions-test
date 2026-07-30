@@ -10,6 +10,9 @@ def load_version(path):
     spec.loader.exec_module(module)
     return module.VERSION_NAME, module.BUILD_NO
 
+def version_tuple(version):
+    return tuple(map(int, version.split(".")))
+
 
 print("Reading version.py from PR...")
 
@@ -54,6 +57,11 @@ try:
             f"VERSION_NAME must be different from main.\n"
             f"Main VERSION_NAME : {main_version}\n"
             f"PR VERSION_NAME   : {pr_version}"
+        )
+
+    if version_tuple(pr_version) <= version_tuple(main_version):
+        raise Exception(
+            f"PR version ({pr_version}) must be greater than main version ({main_version})"
         )
 
     print()
