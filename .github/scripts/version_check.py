@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import importlib.util
+import re
 
 
 def load_version(path):
@@ -81,6 +82,29 @@ try:
         )
     
     print(f"Tag {tag_name} does not exist.")
+
+    print()
+    print("Updating sdkconfig...")
+    
+    sdkconfig_path = "sdkconfig"
+    
+    if not os.path.exists(sdkconfig_path):
+        raise Exception("sdkconfig file not found")
+    
+    with open(sdkconfig_path, "r") as f:
+        sdkconfig = f.read()
+    
+    sdkconfig = re.sub(
+        r'^CONFIG_BUILD_NUMBER=.*$',
+        f'CONFIG_BUILD_NUMBER={pr_build}',
+        sdkconfig,
+        flags=re.MULTILINE,
+    )
+    
+    with open(sdkconfig_path, "w") as f:
+        f.write(sdkconfig)
+    
+    print("sdkconfig updated.")
 
     print()
     print("Version check PASSED")
