@@ -1,0 +1,58 @@
+name: Create Release Tag
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read version
+        id: version
+        run: |
+          python - <<'PY'
+          import version
+
+          print(f"VERSION_NAME={version.VERSION_NAME}")
+          print(f"BUILD_NO={version.BUILD_NO}")
+
+          with open(
+              "${GITHUB_OUTPUT}",
+              "a"
+          ) as f:
+              f.write(f"version={version.VERSION_NAME}\n")
+              f.write(f"build={version.BUILD_NO}\n")
+          PY
+
+      - name: Create tag
+        run: |
+          TAG_NAME="v${{ steps.version.outputs.version }}"
+
+          echo "Creating tag: $TAG_NAME"
+
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
