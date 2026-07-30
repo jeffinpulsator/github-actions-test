@@ -43,7 +43,18 @@ try:
     print(f"Main Build   : {main_build}")
 
     if pr_build <= main_build:
-        raise Exception("BUILD_NO must be greater than main")
+        raise Exception(
+            f"BUILD_NO must be greater than main.\n"
+            f"Main BUILD_NO : {main_build}\n"
+            f"PR BUILD_NO   : {pr_build}"
+        )
+    
+    if pr_version == main_version:
+        raise Exception(
+            f"VERSION_NAME must be different from main.\n"
+            f"Main VERSION_NAME : {main_version}\n"
+            f"PR VERSION_NAME   : {pr_version}"
+        )
 
     print()
     print("Version check PASSED")
