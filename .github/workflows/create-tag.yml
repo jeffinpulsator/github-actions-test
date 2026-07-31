@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "version.py"
 
 permissions:
   contents: write
@@ -37,8 +39,8 @@ jobs:
           echo "Tag name: $TAG_NAME"
 
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "ERROR: Tag $TAG_NAME already exists."
-            exit 1
+            echo "Tag already exists. Nothing to do."
+            exit 0
           fi
 
           git config user.name "github-actions[bot]"
