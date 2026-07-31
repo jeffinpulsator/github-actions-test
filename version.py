@@ -1,2 +1,2 @@
 VERSION_NAME = "1.0.0"
-BUILD_NO = 1
+BUILD_NO = 2
